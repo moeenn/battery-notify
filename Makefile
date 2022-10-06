@@ -15,10 +15,10 @@ main: ${OBJ}
 	${CC} -o ${BINARY} *.o ${LIBS}
 
 install:
-	sudo cp -v ${BINARY} ${INSTALL_DIR}
+	@sudo cp -v ${BINARY} ${INSTALL_DIR}
 
 uninstall:
-	sudo rm -v ${INSTALL_DIR}${PROJECT}
+	@sudo rm -v ${INSTALL_DIR}/${PROJECT}
 
 clean:
 	@echo "Cleaning Executables ..."

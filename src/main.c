@@ -19,7 +19,9 @@ void send_notification(Level l);
 int main(int argc, char **argv) {
   int perc;
 
-  for (perc = getbattery();; sleep(SLEEP)) {
+  for (;; sleep(SLEEP)) {
+    perc = getbattery();
+
     if (perc <= LEVEL_LOW) {
       send_notification(LOW);
       continue;
