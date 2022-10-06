@@ -1,15 +1,17 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
 typedef enum { LOW, HIGH } Level;
 
+#define DEBUG 0
 #define LEVEL_LOW 20
 #define LEVEL_HIGH 80
 #define SLEEP 600
 
 void read_int(char *path, int *target);
-int getbattery();
+int get_battery();
 void send_notification(Level l);
 
 /**
@@ -19,9 +21,7 @@ void send_notification(Level l);
 int main(int argc, char **argv) {
   int perc;
 
-  for (;; sleep(SLEEP)) {
-    perc = getbattery();
-
+  for (perc = get_battery();; sleep(SLEEP)) {
     if (perc <= LEVEL_LOW) {
       send_notification(LOW);
       continue;
@@ -30,6 +30,10 @@ int main(int argc, char **argv) {
     if (perc >= LEVEL_HIGH) {
       send_notification(HIGH);
     }
+
+#if DEBUG == 1
+    printf("polling battery: %d\n", perc);
+#endif
   }
 
   return 0;
@@ -52,7 +56,7 @@ void read_int(char *path, int *target) {
  *  get current battery percentage from the system
  *
  */
-int getbattery() {
+int get_battery() {
   int now, full;
 
   read_int("/sys/class/power_supply/BAT0/charge_now", &now);
@@ -72,5 +76,8 @@ void send_notification(Level l) {
   char *low_args[] = {program, "--icon=battery-low", "Low battery", NULL};
   char *high_args[] = {program, "--icon=battery", "Battery charged", NULL};
 
-  execvp(program, l == LOW ? low_args : high_args);
+  if (fork() == 0) {
+    execvp(program, l == LOW ? low_args : high_args);
+    exit(EXIT_SUCCESS);
+  }
 }
