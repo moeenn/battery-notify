@@ -5,7 +5,7 @@
 
 typedef enum { LOW, HIGH } Level;
 
-#define DEBUG 0
+#define DEBUG 1 
 #define LEVEL_LOW 20
 #define LEVEL_HIGH 80
 #define SLEEP 600
